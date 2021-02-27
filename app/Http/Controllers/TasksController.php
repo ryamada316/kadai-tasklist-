@@ -34,7 +34,7 @@ class TasksController extends Controller
         //新規作成
         $tasks = new Task;
 
-        // メッセージ作成ビューを表示
+        // タスク作成ビューを表示
         return view('tasks.create', [
             'tasks' => $tasks,
         ]);
@@ -49,10 +49,16 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // 作成
+        // バリデーション
+        $request->validate([
+            'content' => 'required|max:255',
+            'status' => 'required|max:10', 
+        ]);
+        
+        // タスクを作成
         $tasks = new Task;
         $tasks->content = $request->content;
+        $tasks->status = $request->status;
         $tasks->save();
 
         // トップページへリダイレクトさせる
@@ -68,10 +74,10 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        // idの値でメッセージを検索して取得
+        // idの値でタスクを検索して取得
         $tasks = Task::findOrFail($id);
 
-        // メッセージ詳細ビューでそれを表示
+        // タスク詳細ビューでそれを表示
         return view('tasks.show', [
             'tasks' => $tasks,
         ]);
@@ -86,10 +92,10 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-        // idの値でメッセージを検索して取得
+        // idの値でタスクを検索して取得
         $tasks = Task::findOrFail($id);
 
-        // メッセージ編集ビューでそれを表示
+        // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'tasks' => $tasks,
         ]);
@@ -105,10 +111,18 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // idの値でメッセージを検索して取得
+
+        // バリデーション
+        $request->validate([
+            'content' => 'required|max:255',
+            'status' => 'required|max:10',  
+        ]);
+        
+        // idの値でタスクを検索して取得
         $tasks = Task::findOrFail($id);
-        // メッセージを更新
+        // タスクを更新
         $tasks->content = $request->content;
+        $tasks->status = $request->status;
         $tasks->save();
 
         // トップページへリダイレクトさせる
