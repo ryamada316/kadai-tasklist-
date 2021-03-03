@@ -57,13 +57,19 @@ class TasksController extends Controller
      */
     public function create()
     {
-        //新規作成
-        $tasks = new Task;
 
-        // タスク作成ビューを表示
-        return view('tasks.create', [
-            'tasks' => $tasks,
-        ]);
+        if (\Auth::check()) { // 認証済みの場合
+                //新規作成
+                $tasks = new Task;
+        
+                // タスク作成ビューを表示
+                return view('tasks.create', [
+                    'tasks' => $tasks,
+                ]);
+        }
+        else {
+                return redirect('/');
+        }
     }
 
     // postでアクセスされた場合の「新規登録処理」
@@ -108,13 +114,25 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        // idの値でタスクを検索して取得
-        $tasks = Task::findOrFail($id);
 
-        // タスク詳細ビューでそれを表示
-        return view('tasks.show', [
-            'tasks' => $tasks,
-        ]);
+        if (\Auth::check()) { // 認証済みの場合
+            // idの値でタスクを検索して取得
+            $tasks = Task::findOrFail($id);
+            
+            
+            if (\Auth::id() === $tasks->user_id) {
+                // タスク詳細ビューでそれを表示
+                return view('tasks.show', [
+                    'tasks' => $tasks,
+                ]);
+            }
+            else {
+                return redirect('/');
+            }
+        }
+        else {
+            return redirect('/');
+        }
     }
 
     // getで（任意のid）にアクセスされた場合の「更新画面表示処理」
@@ -126,13 +144,23 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-        // idの値でタスクを検索して取得
-        $tasks = Task::findOrFail($id);
-
-        // タスク編集ビューでそれを表示
-        return view('tasks.edit', [
-            'tasks' => $tasks,
-        ]);
+        if (\Auth::check()) { // 認証済みの場合
+            // idの値でタスクを検索して取得
+            $tasks = Task::findOrFail($id);
+        
+            if (\Auth::id() === $tasks->user_id) {
+                // タスク編集ビューでそれを表示
+                return view('tasks.edit', [
+                    'tasks' => $tasks,
+                ]);
+            }
+            else {
+                return redirect('/');
+            }
+        }
+        else {
+            return redirect('/');
+        }
     }
 
     // putまたはpatchで（任意のid）にアクセスされた場合の「更新処理」
